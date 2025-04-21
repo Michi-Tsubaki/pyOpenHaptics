@@ -1,3 +1,4 @@
+import pyOpenHaptics.hd as hd
 from ctypes import *
 from .hd_define import *
 import functools
