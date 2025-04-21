@@ -24,11 +24,12 @@ def hd_callback(input_function):
     
     return _callback
 
-def hdAsyncSheduler(callback, device_id=None):
+def hdAsyncSheduler(callback, device_id=None, rate=500):
     if device_id is None:
-        device_id = get_current_device()
-    make_current_device(device_id)  # Ensure we're operating on the right device
+        device_id = hd.get_current_device()
+    hd.make_current_device(device_id)
     pUserData = c_void_p()
+    # 更新レートも設定できるようにする
     _lib_hd.hdScheduleAsynchronous(callback, byref(pUserData), HD_MAX_SCHEDULER_PRIORITY)
 
 def hdSyncSheduler(callback, device_id=None):

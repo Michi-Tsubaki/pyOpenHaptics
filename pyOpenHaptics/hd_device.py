@@ -28,9 +28,9 @@ class HapticDevice(object):
         stop_scheduler()
         close_device(self.id)
     
-    def scheduler(self, callback, scheduler_type):
+    def scheduler(self, callback, scheduler_type, rate=500):  # rate in Hz
         if scheduler_type == "async":
-            hdAsyncSheduler(callback, self.id)
+            hdAsyncSheduler(callback, self.id, rate)
         else:
             hdSyncSheduler(callback, self.id)
 
