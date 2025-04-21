@@ -4,25 +4,24 @@ from .hd_define import *
 
 class HapticDevice(object):
     def __init__(self, callback: hd_callback, device_name: str = "Default Device", scheduler_type: str = "async"):
-
         print("Initializing haptic device with name {}".format(device_name))
-        current_id = get_current_device()
         
+        # Initialize the device first
         self.id = init_device(device_name)
         if self.id == HD_BAD_HANDLE:
             print("Unable to initialize the device. Check the connection!")
             return
         
-        if current_id != self.id:
-            make_current_device(self.id)
-            print("Device {} is already initialized.".format(device_name))
-            return
+        # Make this device current for further operations
+        make_current_device(self.id)
         
-        print("Intialized device! {}/{}".format(self.__vendor__(), self.__model__()))
+        print("Initialized device! {}/{}".format(self.__vendor__(), self.__model__()))
         enable_force()
         start_scheduler()
         if get_error():
-            SystemError()
+            raise SystemError("Error initializing device scheduler")
+        
+        # Set up callback for this specific device
         self.scheduler(callback, scheduler_type)
 
     def close(self):
@@ -31,9 +30,9 @@ class HapticDevice(object):
     
     def scheduler(self, callback, scheduler_type):
         if scheduler_type == "async":
-            hdAsyncSheduler(callback)
+            hdAsyncSheduler(callback, self.id)
         else:
-            hdSyncSheduler(callback)
+            hdSyncSheduler(callback, self.id)
 
 
     @staticmethod
